@@ -17,6 +17,8 @@
 
 'use strict';
 
+
+
 var url = require('url'),
 	fs = require('fs'),
 	port = process.env.PORT || 1337,
@@ -46,6 +48,8 @@ var url = require('url'),
  * @param {Timestamp} start The start timestamp
  * @param {Array} resultsArray The results of all the tests
  * */
+ 
+
 var sendResults = function (res, start, resultsArray) {
 	var results = {};
 
@@ -362,7 +366,13 @@ var allowCrossDomain = function (req, res, next) {
 		next();
 	}
 };
+
+
+
 app.use(allowCrossDomain);
+
+
+
 
 app.use(bodyParser.json());
 app.get('/', handleRequest);
@@ -370,7 +380,57 @@ app.get('/domain', getDomain);
 app.post('/package', handlePackage);
 app.listen(port);
 
-console.log('Server started on port ' + port);
-console.log('To scan a private url go to http://localhost:' + port + '/ and follow the instructions');
+// console.log('Server started on port ' + port);
+// console.log('To scan a private url go to http://localhost:' + port + '/ and follow the instructions');
+
+app.get('/sms', function(req, res, next) {
+	var answers ={};
+	answers.url = 'http://microheather.com';
+	answers.username=false;
+	console.log(answers);
+	// var message = 'Scanning ' + "microheather.com" + '...\r';
+	var body = request.get({
+    'url': 'http://localhost:' + app.port + '/',
+    'qs': answers,
+  	}, function(err, resp, body) {
+		  console.log(_.padRight('Scan complete.'));
+			
+		  //body = JSON.parse(body)
+		    console.log(body)
+			res.send(body);
+
+	  })
+	  
+
+    // var yellow = chalk.yellow;
+
+    // var table = new Table({
+    //   'head': ['Test', { 'hAlign': 'center', 'content': 'Status' }],
+    //   'style': { 'head': ['cyan'], 'border': ['white'], 'padding-left': 2, 'padding-right': 2 },
+    //   'colWidths': [80, 10]
+    // });
+
+    // _.forOwn(body.results, function(data) {
+    //   var color = chalk[data.passed ? 'green' : 'red'],
+    //       summary = JSON.stringify(data.data, null, '  '),
+    //       symbol = symbols[data.passed ? 'pass' : 'fail'];
+
+    //   table.push([color(data.testName), { 'hAlign': 'center', 'content': color(symbol) }]);
+
+    //   if (!data.passed && !_.isEmpty(data.data)) {
+    //     table.push([{ 'colSpan': 2, 'content': yellow(summary) }]);
+    //   }
+    // });
+	
+
+});
+
+var _ = require('lodash'),
+    chalk = require('chalk'),
+    inquirer = require('inquirer'),
+    request = require('request'),
+    Table = require('cli-table2');
+
+
 
 module.exports.port = port;

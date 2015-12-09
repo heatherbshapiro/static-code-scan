@@ -65,16 +65,21 @@ console.log('or follow the prompts below\n');
 
 inquirer.prompt(questions, function(answers) {
   var message = 'Scanning ' + answers.url + '...\r';
-  process.stdout.write(message);
+  // process.stdout.write(message);
+  console.log("answers",answers);
+  console.log("url",answers.url);
+  console.log(app.port);
 
   request.get({
     'url': 'http://localhost:' + app.port + '/',
     'qs': answers
   }, function(err, resp, body) {
+   
     console.log(_.padRight('Scan complete.', message.length));
 
-    body = JSON.parse(body);
-
+    // body = JSON.parse(body);
+    console.log(body);
+/*
     var yellow = chalk.yellow;
 
     var table = new Table({
@@ -96,6 +101,8 @@ inquirer.prompt(questions, function(answers) {
     });
 
     console.log(table.toString());
-    process.exit(0);
+
+    */
+        // process.exit(0);
   });
 });
