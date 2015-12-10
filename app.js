@@ -420,7 +420,7 @@ app.get('/sms', function(req, res, next) {
 			
 			answers.username=false;
 			var body = request.get({
-				'url': 'http://localhost:' + port + '/',
+				'url': 'http://jsday.azurewebsites.net'+ '/',
   				'qs': answers,
 				  }, function(err, resp, body) {
 		 			  console.log(_.padRight('Scan complete.'));
