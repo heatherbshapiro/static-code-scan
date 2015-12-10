@@ -380,49 +380,89 @@ app.get('/domain', getDomain);
 app.post('/package', handlePackage);
 app.listen(port);
 
-// console.log('Server started on port ' + port);
-// console.log('To scan a private url go to http://localhost:' + port + '/ and follow the instructions');
+var accountSid = process.env.ACCOUNTSID; 
+var authToken = process.env.AUTHTOKEN; 
 
+var expression = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
+var regex = new RegExp(expression);
+ 
+var client = require('twilio')(accountSid, authToken); 
+var MongoClient = require('mongodb').MongoClient;
+var twilio= require('twilio');
 app.get('/sms', function(req, res, next) {
-	var answers ={};
-	answers.url = 'http://microheather.com';
-	answers.username=false;
-	console.log(answers);
-	// var message = 'Scanning ' + "microheather.com" + '...\r';
-	var body = request.get({
-    'url': 'http://localhost:' + app.port + '/',
-    'qs': answers,
-  	}, function(err, resp, body) {
-		  console.log(_.padRight('Scan complete.'));
+	 client.messages.list(function(err,data){
+        var messages = data.messages[0];
+		var answers ={};
+		answers.url = messages.body;
+ 		if (/^\/{2}/i.test(answers.url)) {
+        	answers.url= 'http:' + answers.url;
+  		}
+  		if (!/^http/i.test(answers.url)) {
+			answers.url= 'http://' + answers.url;
+  		}
+    	answers.url= answers.url;
+		answers.username = false;
+        console.log(answers.url);
+        if ((messages.body).match(regex)){
+            MongoClient.connect("mongodb://hshapiro93:5millie5@ds042128.mongolab.com:42128/MongoLab-a", function(err, db) {
+                if(!err) {
+                    console.log("We are connected");
+                }
+                if(err) { return console.dir(err); }
+            
+                var collection = db.collection('urls');
+                var docs = [messages];
+                
+                // console.log(db.collection('urls'));
+                collection.insert(docs, {w:1})
+            });
+
 			
-		  //body = JSON.parse(body)
-		    console.log(body)
-			res.send(body);
+			answers.username=false;
+			var body = request.get({
+				'url': 'http://localhost:' + port + '/',
+  				'qs': answers,
+				  }, function(err, resp, body) {
+		 			  console.log(_.padRight('Scan complete.'));
+					//   body = JSON.stringify(body)
+					  body = JSON.parse(body);
+					//   console.log(Object.keys(body.results));
+					  var passed = 0;
+					  var failVars = []
+					  var wrong = 0;
+					  for(var keys in body.results){
+						  if (body.results[keys]['passed']==true){
+							  passed= passed+1;
+						  }
+						  else{
+							  wrong = wrong+1
+							  failVars.push(keys);
+							 }
+						  
+					  }
+					//   console.log(passed, wrong);
+					  console.log(failVars)
+					  var twiml = new twilio.TwimlResponse();
+					  var correct = "Your URL, " + answers.url + ", passed " + passed + " out of " + (passed + wrong) + " tests!"
+					  var failed = "You Failed " + failVars.join(', ') + ".";
+					  var moreInfo= "For more information, go to https://dev.windows.com/en-us/microsoft-edge/tools/staticscan/?url=" + answers.url
+					  console.log(correct)
+					  console.log(failed)
+					  console.log(moreInfo)
+					  twiml.message(correct + " " + failed + " " +moreInfo);
+					  res.writeHead(200, {'Content-Type': 'text/xml'});
+					  res.end(twiml.toString()); 
+					 // res.send(body)
+	 		 })
+        }
+        else{
+         var twiml = new twilio.TwimlResponse();
+         twiml.message("Please enter a valid URL");
 
-	  })
-	  
-
-    // var yellow = chalk.yellow;
-
-    // var table = new Table({
-    //   'head': ['Test', { 'hAlign': 'center', 'content': 'Status' }],
-    //   'style': { 'head': ['cyan'], 'border': ['white'], 'padding-left': 2, 'padding-right': 2 },
-    //   'colWidths': [80, 10]
-    // });
-
-    // _.forOwn(body.results, function(data) {
-    //   var color = chalk[data.passed ? 'green' : 'red'],
-    //       summary = JSON.stringify(data.data, null, '  '),
-    //       symbol = symbols[data.passed ? 'pass' : 'fail'];
-
-    //   table.push([color(data.testName), { 'hAlign': 'center', 'content': color(symbol) }]);
-
-    //   if (!data.passed && !_.isEmpty(data.data)) {
-    //     table.push([{ 'colSpan': 2, 'content': yellow(summary) }]);
-    //   }
-    // });
-	
-
+         res.writeHead(200, {'Content-Type': 'text/xml'});
+         res.end(twiml.toString()); 
+        } 
+   });	  
 });
 
 var _ = require('lodash'),

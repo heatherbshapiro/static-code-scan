@@ -69,6 +69,7 @@ inquirer.prompt(questions, function(answers) {
   console.log("answers",answers);
   console.log("url",answers.url);
   console.log(app.port);
+  console.log(message.length);
 
   request.get({
     'url': 'http://localhost:' + app.port + '/',
@@ -76,7 +77,7 @@ inquirer.prompt(questions, function(answers) {
   }, function(err, resp, body) {
    
     console.log(_.padRight('Scan complete.', message.length));
-
+    // console.log(resp);
     // body = JSON.parse(body);
     console.log(body);
 /*
