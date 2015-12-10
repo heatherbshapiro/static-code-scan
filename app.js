@@ -389,7 +389,7 @@ var regex = new RegExp(expression);
 var client = require('twilio')(accountSid, authToken); 
 var MongoClient = require('mongodb').MongoClient;
 var twilio= require('twilio');
-app.get('/sms', function(req, res, next) {
+app.get('/response', function(req, res, next) {
 	 client.messages.list(function(err,data){
         var messages = data.messages[0];
 		var answers ={};
