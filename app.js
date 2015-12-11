@@ -380,12 +380,11 @@ app.get('/domain', getDomain);
 app.post('/package', handlePackage);
 app.listen(port);
 
-var accountSid = process.env.ACCOUNTSID; 
-var authToken = process.env.AUTHTOKEN; 
+// var accountSid = process.env.ACCOUNTSID; 
+// var authToken = process.env.AUTHTOKEN;
 
-
-
-var mongoInfo = process.env.mongoInfo
+  var accountSid = 'ACdf61bb67eb9d93e0eccbd760b293bd75'; 
+  var authToken = '61406275dc894bb906084f4c5a4a05c9';  
 
 var expression = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
 var regex = new RegExp(expression);
@@ -397,6 +396,10 @@ app.get('/sms', function(req, res, next) {
 	 client.messages.list(function(err,data){
         var messages = data.messages[0];
 		var answers ={};
+		if (messages.body[messages.body.length-1]==="."){
+			messages.body = messages.body.slice(0,-1);
+		}
+		console.log(messages.body);
 		// messages.body = "Http://thebitchwhocodes.com";
 		answers.url = messages.body;
  		if (/^\/{2}/i.test(answers.url)) {
@@ -436,7 +439,7 @@ app.get('/sms', function(req, res, next) {
 					  if(body === "The page cannot be displayed because an internal server error has occurred."){
 						  console.log("here");
 						  var twiml = new twilio.TwimlResponse();
-						  twiml.message("We encountered an error with this URL. Lease try with a different URL");
+						  twiml.message("We encountered an error with this URL. Please try with a different URL");
 						  res.writeHead(200, {'Content-Type': 'text/xml'});
 					 	  res.end(twiml.toString()); 
 					  }
