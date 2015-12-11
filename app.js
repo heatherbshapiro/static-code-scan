@@ -407,7 +407,7 @@ app.get('/sms', function(req, res, next) {
 		answers.username = false;
         // console.log(answers.url);
         if ((messages.body).match(regex)){
-            MongoClient.connect(mongoInfo, function(err, db) {
+            MongoClient.connect("mongodb://hshapiro93:5millie5@ds042128.mongolab.com:42128/MongoLab-a", function(err, db) {
                 if(!err) {
                     console.log("We are connected");
                 }
@@ -422,6 +422,7 @@ app.get('/sms', function(req, res, next) {
 			
 			
 			answers.username=false;
+			console.log(answers);
 			var body = request.get({
 				'url': 'http://jsday.azurewebsites.net'+ '/',
   				'qs': answers,
