@@ -382,7 +382,8 @@ app.listen(port);
 
 var accountSid = process.env.ACCOUNTSID; 
 var authToken = process.env.AUTHTOKEN; 
- 
+
+
 
 var mongoInfo = process.env.mongoInfo
 
@@ -405,7 +406,7 @@ app.get('/sms', function(req, res, next) {
   		}
     	answers.url= answers.url;
 		answers.username = false;
-        console.log(answers.url);
+        // console.log(answers.url);
         if ((messages.body).match(regex)){
             MongoClient.connect("mongodb://hshapiro93:5millie5@ds042128.mongolab.com:42128/MongoLab-a", function(err, db) {
                 if(!err) {
@@ -422,17 +423,26 @@ app.get('/sms', function(req, res, next) {
 			
 			
 			answers.username=false;
+			answers.url = "http://google.gn"
+			console.log(answers);
 			var body = request.get({
 				'url': 'http://jsday.azurewebsites.net'+ '/',
   				'qs': answers,
 				  }, function(err, resp, body) {
 		 			  console.log(_.padRight('Scan complete.'));
 					//   body = JSON.stringify(body)
+					  if(body = "https://dev.windows.com/en-us/microsoft-edge/tools/staticscan/?url=http%3A%2F%2Fgoogle.gn"){
+						  var twiml = new twilio.TwimlResponse();
+						  twiml.message("We encountered an error with this URL. PLease try with a different URL");
+						  res.writeHead(200, {'Content-Type': 'text/xml'});
+					 	  res.end(twiml.toString()); 
+					  }
+					  else{
 					  body = JSON.parse(body);
-					//   console.log(Object.keys(body.results));
 					  var passed = 0;
 					  var failVars = []
 					  var wrong = 0;
+					  
 					  for(var keys in body.results){
 						  if (body.results[keys]['passed']==true){
 							  passed= passed+1;
@@ -444,18 +454,19 @@ app.get('/sms', function(req, res, next) {
 						  
 					  }
 					//   console.log(passed, wrong);
-					  console.log(failVars)
+					//   console.log(failVars)
 					  var twiml = new twilio.TwimlResponse();
 					  var correct = "Your URL, " + answers.url + ", passed " + passed + " out of " + (passed + wrong) + " tests!"
 					  var failed = "You Failed " + failVars.join(', ') + ".";
 					  var moreInfo= "For more information, go to https://dev.windows.com/en-us/microsoft-edge/tools/staticscan/?url=" + answers.url
-					  console.log(correct)
-					  console.log(failed)
-					  console.log(moreInfo)
+					//   console.log(correct)
+					//   console.log(failed)
+					//   console.log(moreInfo)
 					  twiml.message(correct + " " + failed + " " +moreInfo);
 					  res.writeHead(200, {'Content-Type': 'text/xml'});
 					  res.end(twiml.toString()); 
 					 // res.send(body)
+					  }
 	 		 })
         }
         else{
