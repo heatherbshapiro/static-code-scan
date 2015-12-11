@@ -383,6 +383,7 @@ app.listen(port);
 var accountSid = process.env.ACCOUNTSID; 
 var authToken = process.env.AUTHTOKEN; 
 
+
 var expression = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
 var regex = new RegExp(expression);
  
@@ -409,7 +410,8 @@ app.get('/sms', function(req, res, next) {
                     console.log("We are connected");
                 }
                 if(err) { return console.dir(err); }
-            
+				delete messages.from;
+				console.log(messages);
                 var collection = db.collection('urls');
                 var docs = [messages];
                 
