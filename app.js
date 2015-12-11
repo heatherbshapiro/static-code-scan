@@ -380,11 +380,13 @@ app.get('/domain', getDomain);
 app.post('/package', handlePackage);
 app.listen(port);
 
-var accountSid = process.env.ACCOUNTSID; 
-var authToken = process.env.AUTHTOKEN; 
+// var accountSid = process.env.ACCOUNTSID; 
+// var authToken = process.env.AUTHTOKEN; 
 
+var accountSid = 'ACdf61bb67eb9d93e0eccbd760b293bd75'; 
+var authToken = '61406275dc894bb906084f4c5a4a05c9'; 
 
-var mongoInfo = process.env.MONGOINFO
+var mongoInfo = process.env.mongoInfo
 
 var expression = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
 var regex = new RegExp(expression);
@@ -396,6 +398,7 @@ app.get('/sms', function(req, res, next) {
 	 client.messages.list(function(err,data){
         var messages = data.messages[0];
 		var answers ={};
+		// messages.body = "Http://thebitchwhocodes.com";
 		answers.url = messages.body;
  		if (/^\/{2}/i.test(answers.url)) {
         	answers.url= 'http:' + answers.url;
@@ -422,6 +425,7 @@ app.get('/sms', function(req, res, next) {
 			
 			
 			answers.username=false;
+			// answers.url = "http://google.gn"
 			console.log(answers);
 			var body = request.get({
 				'url': 'http://jsday.azurewebsites.net'+ '/',
@@ -429,44 +433,46 @@ app.get('/sms', function(req, res, next) {
 				  }, function(err, resp, body) {
 		 			  console.log(_.padRight('Scan complete.'));
 					//   body = JSON.stringify(body)
-					  if(body = "https://dev.windows.com/en-us/microsoft-edge/tools/staticscan/?url=http%3A%2F%2Fgoogle.gn"){
+					  console.log(body);
+					  if(body === "The page cannot be displayed because an internal server error has occurred."){
+						  console.log("here");
 						  var twiml = new twilio.TwimlResponse();
-						  twiml.message("We encountered an error with this URL. Please try with a different URL.");
+						  twiml.message("We encountered an error with this URL. Lease try with a different URL");
 						  res.writeHead(200, {'Content-Type': 'text/xml'});
 					 	  res.end(twiml.toString()); 
 					  }
 					  else{
-					  body = JSON.parse(body);
-					  var passed = 0;
-					  var failVars = []
-					  var wrong = 0;
+					  	body = JSON.parse(body);
+					  	var passed = 0;
+					  	var failVars = []
+					 	var wrong = 0;
 					  
-					  for(var keys in body.results){
-						  if (body.results[keys]['passed']==true){
-							  passed= passed+1;
-						  }
-						  else{
-							  wrong = wrong+1
-							  failVars.push(keys);
-							 }
-						  
-					  }
+					  	for(var keys in body.results){
+							if (body.results[keys]['passed']==true){
+								passed= passed+1;
+							}
+							else{
+								wrong = wrong+1
+								failVars.push(keys);
+								}
+							
+						}
 					//   console.log(passed, wrong);
 					//   console.log(failVars)
-					  var twiml = new twilio.TwimlResponse();
-					  var correct = "Your URL, " + answers.url + ", passed " + passed + " out of " + (passed + wrong) + " tests!"
-					  var failed = "You Failed " + failVars.join(', ') + ".";
-					  var moreInfo= "For more information, go to https://dev.windows.com/en-us/microsoft-edge/tools/staticscan/?url=" + answers.url
+						var twiml = new twilio.TwimlResponse();
+						var correct = "Your URL, " + answers.url + ", passed " + passed + " out of " + (passed + wrong) + " tests!"
+						var failed = "You Failed " + failVars.join(', ') + ".";
+						var moreInfo= "For more information, go to https://dev.windows.com/en-us/microsoft-edge/tools/staticscan/?url=" + answers.url
 					//   console.log(correct)
 					//   console.log(failed)
 					//   console.log(moreInfo)
-					  twiml.message(correct + " " + failed + " " +moreInfo);
-					  res.writeHead(200, {'Content-Type': 'text/xml'});
-					  res.end(twiml.toString()); 
+					 	 twiml.message(correct + " " + failed + " " +moreInfo);
+					 	 res.writeHead(200, {'Content-Type': 'text/xml'});
+					 	 res.end(twiml.toString()); 
 					 // res.send(body)
-					  }
-	 		 })
-        }
+						  }
+	 			 })
+       	 }
         else{
          var twiml = new twilio.TwimlResponse();
          twiml.message("Please enter a valid URL");
