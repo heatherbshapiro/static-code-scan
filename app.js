@@ -380,11 +380,10 @@ app.get('/domain', getDomain);
 app.post('/package', handlePackage);
 app.listen(port);
 
-// var accountSid = process.env.ACCOUNTSID; 
-// var authToken = process.env.AUTHTOKEN; 
+var accountSid = process.env.ACCOUNTSID; 
+var authToken = process.env.AUTHTOKEN; 
 
-var accountSid = 'ACdf61bb67eb9d93e0eccbd760b293bd75'; 
-var authToken = '61406275dc894bb906084f4c5a4a05c9'; 
+
 
 var mongoInfo = process.env.mongoInfo
 
