@@ -422,8 +422,6 @@ app.get('/sms', function(req, res, next) {
 			
 			
 			answers.username=false;
-			answers.url = "http://google.gn"
-			console.log(answers);
 			var body = request.get({
 				'url': 'http://jsday.azurewebsites.net'+ '/',
   				'qs': answers,
