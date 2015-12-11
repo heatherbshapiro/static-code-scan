@@ -433,7 +433,7 @@ app.get('/sms', function(req, res, next) {
 					//   body = JSON.stringify(body)
 					  if(body = "https://dev.windows.com/en-us/microsoft-edge/tools/staticscan/?url=http%3A%2F%2Fgoogle.gn"){
 						  var twiml = new twilio.TwimlResponse();
-						  twiml.message("We encountered an error with this URL. Please try with a different URL");
+						  twiml.message("We encountered an error with this URL. Please try with a different URL.");
 						  res.writeHead(200, {'Content-Type': 'text/xml'});
 					 	  res.end(twiml.toString()); 
 					  }
