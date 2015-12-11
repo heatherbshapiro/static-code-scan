@@ -384,8 +384,7 @@ var accountSid = process.env.ACCOUNTSID;
 var authToken = process.env.AUTHTOKEN; 
 
 
-
-var mongoInfo = process.env.mongoInfo
+var mongoInfo = process.env.MONGOINFO
 
 var expression = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
 var regex = new RegExp(expression);
@@ -408,7 +407,7 @@ app.get('/sms', function(req, res, next) {
 		answers.username = false;
         // console.log(answers.url);
         if ((messages.body).match(regex)){
-            MongoClient.connect("mongodb://hshapiro93:5millie5@ds042128.mongolab.com:42128/MongoLab-a", function(err, db) {
+            MongoClient.connect(mongoInfo, function(err, db) {
                 if(!err) {
                     console.log("We are connected");
                 }
