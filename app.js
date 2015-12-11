@@ -380,11 +380,12 @@ app.get('/domain', getDomain);
 app.post('/package', handlePackage);
 app.listen(port);
 
-// var accountSid = process.env.ACCOUNTSID; 
-// var authToken = process.env.AUTHTOKEN;
+var accountSid = process.env.ACCOUNTSID; 
+var authToken = process.env.AUTHTOKEN; 
 
-  var accountSid = 'ACdf61bb67eb9d93e0eccbd760b293bd75'; 
-  var authToken = '61406275dc894bb906084f4c5a4a05c9';  
+
+
+var mongoInfo = process.env.mongoInfo
 
 var expression = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
 var regex = new RegExp(expression);
@@ -396,10 +397,6 @@ app.get('/sms', function(req, res, next) {
 	 client.messages.list(function(err,data){
         var messages = data.messages[0];
 		var answers ={};
-		if (messages.body[messages.body.length-1]==="."){
-			messages.body = messages.body.slice(0,-1);
-		}
-		console.log(messages.body);
 		// messages.body = "Http://thebitchwhocodes.com";
 		answers.url = messages.body;
  		if (/^\/{2}/i.test(answers.url)) {
